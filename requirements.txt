@@ -1,0 +1,10 @@
+pydantic==2.5.3
+requests==2.31.0
+selenium==4.16.0
+streamlit==1.29.0
+apscheduler==3.10.4
+fake-useragent==1.4.0
+undetected-chromedriver==3.5.4
+python-dotenv==1.0.0
+beautifulsoup4==4.12.2
+lxml==5.0.0 
