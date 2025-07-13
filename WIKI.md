@@ -64,6 +64,18 @@ INVENTORY_API = "https://www.tesla.com/api/tesla/inventory/tesla"
 }
 ```
 
+#### Türkiye İçin Özel Notlar
+
+Tesla'nın API'si global olarak aynı endpoint'i kullanır, bölgesel farklılıklar query parametrelerinde belirtilir. Bot, otomatik olarak:
+
+1. Ana API endpoint'ini dener: `https://www.tesla.com/api/tesla/inventory/tesla`
+2. Eğer 404 hatası alırsa, alternatif URL'leri dener:
+   - `https://www.tesla.com/tr_TR/inventory/api/v1/inventory-results`
+   - `https://www.tesla.com/tr_TR/api/tesla/inventory`
+   - `https://www.tesla.com/inventory/api/v1/inventory-results`
+
+3. Türkiye'ye özel veri yapılarını kontrol eder
+
 ### Bot Korumaları
 
 1. **Undetected ChromeDriver**: Selenium'un tespit edilmesini engeller

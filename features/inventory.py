@@ -125,25 +125,63 @@ class TeslaEnvanter:
             if self.config.bot.bot_korumalari:
                 time.sleep(random.uniform(0.5, 2.0))
             
+            # Önce ana API'yi dene
+            api_url = BolgeAyarlari.INVENTORY_API
+            
             response = self.session.get(
-                BolgeAyarlari.INVENTORY_API,
+                api_url,
                 params=self._api_params(),
                 timeout=10
             )
             
+            # Eğer 404 veya başka bir hata alırsak, alternatif URL'leri dene
+            if response.status_code == 404:
+                # Türkiye için alternatif URL'ler
+                alternatif_urls = [
+                    f"{BolgeAyarlari.BASE_URL}/inventory/api/v1/inventory-results",
+                    f"{BolgeAyarlari.BASE_URL}/api/tesla/inventory",
+                    "https://www.tesla.com/inventory/api/v1/inventory-results"
+                ]
+                
+                for alt_url in alternatif_urls:
+                    try:
+                        if self.config.bot.debug_mod:
+                            print(f"[DEBUG] Alternatif URL deneniyor: {alt_url}")
+                        
+                        response = self.session.get(
+                            alt_url,
+                            params=self._api_params(),
+                            timeout=10
+                        )
+                        
+                        if response.status_code == 200:
+                            api_url = alt_url
+                            print(f"[BILGI] Alternatif API endpoint kullanılıyor: {alt_url}")
+                            break
+                    except:
+                        continue
+            
             if response.status_code == 200:
                 data = response.json()
                 results = data.get('results', [])
+                
+                # Türkiye'ye özel veri yapısı kontrolü
+                if not results and 'data' in data:
+                    results = data.get('data', {}).get('results', [])
                 
                 # Araçları EnvanterArac nesnelerine dönüştür
                 araclar = [EnvanterArac(item) for item in results]
                 
                 if self.config.bot.debug_mod:
                     print(f"[DEBUG] {len(araclar)} araç bulundu")
+                    print(f"[DEBUG] Kullanılan API: {api_url}")
                     
                 return araclar
             else:
-                print(f"[HATA] API yanıtı: {response.status_code} - {response.text}")
+                print(f"[HATA] API yanıtı: {response.status_code}")
+                if self.config.bot.debug_mod:
+                    print(f"[DEBUG] Response headers: {response.headers}")
+                    print(f"[DEBUG] Response text: {response.text[:500]}...")
                 return []
                 
         except requests.exceptions.RequestException as e:

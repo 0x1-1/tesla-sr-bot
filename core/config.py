@@ -180,7 +180,7 @@ class TeslaConfig(BaseModel):
 class BolgeAyarlari:
     """Türkiye bölgesi için sabit ayarlar"""
     BASE_URL = "https://www.tesla.com/tr_TR"
-    INVENTORY_API = "https://www.tesla.com/api/tesla/inventory/tesla"
+    INVENTORY_API = "https://www.tesla.com/tr_TR/api/tesla/inventory/tesla"
     ORDER_URL = "https://www.tesla.com/tr_TR/modely/order"
     DESIGN_URL = "https://www.tesla.com/tr_TR/modely/design#overview"
     
